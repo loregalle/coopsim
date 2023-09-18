@@ -1,0 +1,21 @@
+td.padthis {
+	padding-left: 50px;
+}
+
+h1 {
+	margin-left: 50px;
+}
+
+h2 {
+	margin-left: 50px;
+}
+
+form {
+	margin-left: 70px;
+}
+
+div.container {
+  max-width: 800px;
+  margin-left: 70px;
+  text-align: justify;
+}
