@@ -312,6 +312,7 @@ def plot_split_bar(sim):
 #        Development server             #
 # comment out next lines for deployment #
 #########################################
-if __name__ == "__main__":
 
-    app.run(host="127.0.0.1", port=8080, debug=True)
+# if __name__ == "__main__":
+
+#     app.run(host="127.0.0.1", port=8080, debug=True)
