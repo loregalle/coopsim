@@ -19,3 +19,8 @@ div.container {
   margin-left: 70px;
   text-align: justify;
 }
+
+div.invalid {
+	font-size: 72px;
+  margin-left: 70px;
+}

@@ -63,6 +63,7 @@
 				</tr>
 			</table>
 		</form>
+
 		<table>
 			<tr>
 				<td><div id="splitJSON" class="splitJSON"></div></td>
@@ -70,16 +71,21 @@
 				<td><div>Generation: F<input type="number" name="fgen2" value="{{params['fgen2']}}" onchange="cb2(this.value)" min = 0 max="{{params['n_gen']-1}}"></div><div id="graphJSON2" class="graphJSON2"></div></td>
 			</tr>
 		</table>
+
+		{{ invalidinput | safe }}
+
+		<h2>Disclaimer:</h2>
+		<div class='container'>
+			<p>This tool has been developed as a personal learning project. It can be used for educational purposes, but it is in no way attempting to simulate real-world situations.</p>
+
+			<p>Due to memory limitations, larger simulations than the default (i.e. 15 individuals for 15 generations) may not work correctly. One day I'll be rich and I'll pay for more resources</p>
+		</div><br>
+
 		<h2>Explanation:</h2>
 		<div class='container'>
 			<p>The cooperation simulator randomises interactions between "cooperative" and "uncooperative" individuals in a generation. A fitness multiplier will be applied to both individuals of any interaction.
 
 			<p> A cooperative-cooperative interaction will apply the cooperative multiplier for both individuals. An uncooperative-uncooperative interaction will apply the uncooperative multiplier for both individuals. A cooperative-uncooperative interaction will apply the "disadvantageous" multiplier on the cooperative individual and the "advantageous" multiplier on the uncooperative individual. The proportion of the sum of the fitness of all cooperative individuals on the sum of the fitness of all individuals defines the proportion of cooperative individuals in the next generation.</p>
-		</div><br>
-		
-		<h2>Disclaimer:</h2>
-		<div class='container'>
-			<p>This tool has been developed as a personal learning project. It can be used for educational purposes, but it is in no way attempting to simulate real-world situations.</p>
 		</div><br>
 		
 		<h2>Parameters instructions:</h2>

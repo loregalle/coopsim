@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, session
+# from flask_session import Session                                     # future implementation: server side caching with redis
 import json
 import networkx as nx
 import numpy as np
@@ -16,26 +17,28 @@ from plotly.subplots import make_subplots
 
 
 app = Flask(__name__)
-simul = None
+
+# SESSION_TYPE = 'redis'
+SECRET_KEY = 'averysecretkey'
+app.config.from_object(__name__)
+# Session(app)
 
 @app.route('/callback1', methods=['POST', 'GET'])
 def cb1():
-    global simul
-    return plot_gen_plotly(request.args.get('fgen1'), simul)
+    return plot_gen_plotly(request.args.get('fgen1'), session['simul'])
     
 @app.route('/callback2', methods=['POST', 'GET'])
 def cb2():
-    global simul
-    return plot_gen_plotly(request.args.get('fgen2'), simul)
+    return plot_gen_plotly(request.args.get('fgen2'), session['simul'])
 
 @app.route("/")
 
 def index():
 
-    n_gen = request.args.get("n_gen", type=int) or 20
-    pop_size = request.args.get("pop_size", type=int) or 20
+    n_gen = request.args.get("n_gen", type=int) or 15
+    pop_size = request.args.get("pop_size", type=int) or 15
     n_inter = request.args.get("n_inter", type=int) or 2
-    start_split = request.args.get("split") or 0.8
+    start_split = request.args.get("split") or 0.75
     mult_c = request.args.get("mult_c") or 1.3
     mult_u = request.args.get("mult_u") or 1
     mult_adva = request.args.get("mult_adva") or 1
@@ -65,8 +68,7 @@ def index():
         mult_disa = convert_to_float(mult_disa)
         mult_adva = convert_to_float(mult_adva)
         
-        global simul
-        simul = get_many_gen(
+        session['simul'] = get_many_gen(
             n_gen = n_gen,
             pop_size = pop_size,
             mult_c = mult_c,
@@ -78,13 +80,21 @@ def index():
             seed = seed
         )
 
-        splitJSON = plot_split_bar(simul)
-        graphJSON1 = plot_gen_plotly(fgen1, simul)
-        graphJSON2 = plot_gen_plotly(fgen2, simul)
+        splitJSON = plot_split_bar(session['simul'])
+        graphJSON1 = plot_gen_plotly(fgen1, session['simul'])
+        graphJSON2 = plot_gen_plotly(fgen2, session['simul'])
         
-        return render_template('index.html', params = params, splitJSON = splitJSON, graphJSON1 = graphJSON1, graphJSON2 = graphJSON2)
+        return render_template('index.html', params = params, splitJSON = splitJSON, graphJSON1 = graphJSON1, graphJSON2 = graphJSON2, invalidinput = '')
+
     except:
-        return render_template('index.html', params = params, splitJSON = '', graphJSON1 = '', graphJSON2 = '') + 'Invalid input'
+        return render_template(
+            'index.html',
+            params = params,
+            splitJSON = '',
+            graphJSON1 = '',
+            graphJSON2 = '',
+            invalidinput = '<div class="invalid"><p>Invalid input</p></div>'
+        )
 
 ###############################
 # custom functions start here #
@@ -163,9 +173,9 @@ def get_gen(pop_size, mult_c, mult_u, mult_disa, mult_adva, n_inter, split):
     except:
         end_split = 0
     
-    out = {'start_split': split,
+    out = {'start_split': gen_uncoop/pop_size,
            'end_split': end_split,
-           'graph': G1}
+           'graph': nx.node_link_data(G1)}
     
     return out
 
@@ -193,7 +203,7 @@ def convert_to_float(frac_str):
 
 def plot_gen_plotly(gen, sim):
 
-    G = sim[f'F{gen}']['graph']
+    G = nx.node_link_graph(sim[f'F{gen}']['graph'])
     pos = nx.spring_layout(G, seed = 1234)
 
     edge_x = []
@@ -313,6 +323,6 @@ def plot_split_bar(sim):
 # comment out next lines for deployment #
 #########################################
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 
-#     app.run(host="127.0.0.1", port=8080, debug=True)
+    app.run(host="127.0.0.1", port=8080, debug=True)
