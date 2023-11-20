@@ -1,5 +1,9 @@
 # coopsim
-Disclaimer: This tool has been developed as a personal learning project. It can be used for educational purposes, but it is in no way attempting to simulate real-world situations.  
+Disclaimer: This tool can be used for educational purposes, but it is in no way attempting to simulate real-world situations.  
+
+Developed with [Flask](https://flask.palletsprojects.com/en/3.0.x/)  
+Deployed @ https://coopsim.ts.r.appspot.com/
+
 
 ## Concept
 The cooperation simulator randomises interactions between "cooperative" and "uncooperative" individuals in a generation. A fitness multiplier will be applied to both individuals of any interaction.  
